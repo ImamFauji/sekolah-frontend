@@ -7,6 +7,8 @@ function Teachers() {
   const [email, setEmail] = useState("");
   const [nip, setNip] = useState("");
   const [editingId, setEditingId] = useState(null);
+  const [selectedClassId, setSelectedClassId] = useState("");
+  const [classes, setClasses] = useState([]);
 
   const api = axios.create({
     baseURL: "http://localhost:8000/api", // Laravel API
@@ -14,6 +16,16 @@ function Teachers() {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
+
+  // Fetch Classes
+  const fetchClasses = async () => {
+    try {
+      const res = await api.get("/classes");
+      setClasses(res.data);
+    } catch (err) {
+      console.error("Error fetch classes:", err.response?.data);
+    }
+  };
 
   // Fetch teachers list
   const fetchTeachers = async () => {
@@ -27,19 +39,26 @@ function Teachers() {
 
   useEffect(() => {
     fetchTeachers();
+    fetchClasses();
   }, []);
 
   // Add new teacher
   const handleAdd = async (e) => {
     e.preventDefault();
     try {
-      await api.post("/teachers", { name, email, nip });
+      await api.post("/teachers", {
+        name,
+        email,
+        nip,
+        school_class_id: selectedClassId,
+      });
       setName("");
       setEmail("");
       setNip("");
+      setSelectedClassId("");
       fetchTeachers();
     } catch (err) {
-      console.error(err.response?.data);
+      console.error("Error add teacher:", err.response?.data || err.message);
     }
   };
 
@@ -79,31 +98,50 @@ function Teachers() {
 
   return (
     <div style={{ padding: "20px" }}>
-      <h2>Manage Teachers</h2>
+      <h2>Management Guru</h2>
 
       <form onSubmit={editingId ? handleUpdate : handleAdd}>
         <input
+          className="m-1"
           type="text"
-          placeholder="Teacher Name"
+          placeholder="Nama"
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
         />
         <input
+          className="m-1"
           type="email"
-          placeholder="Teacher Email"
+          placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
         />
         <input
+          className="m-1"
           type="text"
-          placeholder="Teacher NIP"
+          placeholder="NIP"
           value={nip}
           onChange={(e) => setNip(e.target.value)}
           required
         />
-        <button type="submit">{editingId ? "Update" : "Add"}</button>
+        <select
+          className="m-1"
+          value={selectedClassId}
+          onChange={(e) => setSelectedClassId(e.target.value)}
+          required
+        >
+          <option value="">-- Select Class --</option>
+          {classes.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.name}
+            </option>
+          ))}
+        </select>
+
+        <button className="m-1" type="submit">
+          {editingId ? "Update" : "Add"}
+        </button>
         {editingId && (
           <button
             type="button"
@@ -123,10 +161,10 @@ function Teachers() {
         <thead>
           <tr>
             <th>ID</th>
-            <th>Name</th>
+            <th>Nama</th>
             <th>Email</th>
             <th>NIP</th>
-            <th>Actions</th>
+            <th>Aksi</th>
           </tr>
         </thead>
         <tbody>
@@ -137,8 +175,12 @@ function Teachers() {
               <td>{t.email}</td>
               <td>{t.nip}</td>
               <td>
-                <button onClick={() => handleEdit(t)}>Edit</button>
-                <button onClick={() => handleDelete(t.id)}>Delete</button>
+                <button className="m-1" onClick={() => handleEdit(t)}>
+                  Edit
+                </button>
+                <button className="m-1" onClick={() => handleDelete(t.id)}>
+                  Delete
+                </button>
               </td>
             </tr>
           ))}

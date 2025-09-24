@@ -21,8 +21,8 @@ export default function Dashboard() {
             </h5>
             <p>{c.description}</p>
             <p>
-              <strong>Students:</strong> {c.students.length} —{" "}
-              <strong>Teachers:</strong> {c.teachers.length}
+              <strong>Siswa:</strong> {c.students.length} —{" "}
+              <strong>Guru:</strong> {c.teachers.length}
             </p>
           </div>
         </div>

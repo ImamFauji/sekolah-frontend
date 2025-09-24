@@ -11,7 +11,7 @@ export default function NavBar() {
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
       <div className="container">
         <Link className="navbar-brand" to="/">
-          SchoolApp
+          <b>Aplikasi Sekolah</b>
         </Link>
 
         <button
@@ -30,17 +30,17 @@ export default function NavBar() {
           <ul className="navbar-nav me-auto">
             <li className="nav-item">
               <Link className="nav-link" to="/classes">
-                Classes
+                Kelas
               </Link>
             </li>
             <li className="nav-item">
               <Link className="nav-link" to="/students">
-                Students
+                Siswa
               </Link>
             </li>
             <li className="nav-item">
               <Link className="nav-link" to="/teachers">
-                Teachers
+                Guru
               </Link>
             </li>
           </ul>
